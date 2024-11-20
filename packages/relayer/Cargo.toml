@@ -60,6 +60,8 @@ ic-utils = "0.37.0"
 candid = "0.10.10"
 thiserror = "1.0.63"
 rustc-hex = "2.1.0"
+aws-config = "1.5.10"
+aws-sdk-secretsmanager = "1.53.0"
 
 [build-dependencies]
 ethers = "2.0.10"

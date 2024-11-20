@@ -3,7 +3,8 @@ use relayer::*;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    run(RelayerConfig::new()).await?;
+    let config = RelayerConfig::new().await;
+    run(config).await?;
 
     Ok(())
 }

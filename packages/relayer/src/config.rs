@@ -1,5 +1,8 @@
 use crate::*;
 
+use aws_config::meta::region::RegionProviderChain;
+use aws_config::BehaviorVersion;
+use aws_sdk_secretsmanager::Client;
 use std::{env, path::PathBuf};
 
 use dotenv::dotenv;
@@ -38,9 +41,35 @@ impl RelayerConfig {
     /// # Returns
     ///
     /// A new instance of RelayerConfig.
-    pub fn new() -> Self {
+    pub async fn new() -> Self {
         // Load environment variables from .env file
         dotenv().ok();
+
+        // Load environment variables from amazon secrets manager
+        let aws_region = env::var("AWS_REGION").unwrap();
+        let static_region: &'static str = Box::leak(aws_region.into_boxed_str());
+        let region_provider =
+            RegionProviderChain::default_provider().or_else(static_region);
+
+        let shared_config = aws_config::defaults(BehaviorVersion::latest())
+            .region(region_provider)
+            .load()
+            .await;
+        let client = Client::new(&shared_config);
+
+
+        let secret_id = env::var("AWS_SECRET_ACCESS_KEY").unwrap();
+        let static_secret_id: &'static str = Box::leak(secret_id.into_boxed_str());
+        let resp = client
+            .get_secret_value()
+            .secret_id(static_secret_id)
+            .send()
+            .await;
+
+        println!(
+            "Value: {}",
+            resp.unwrap().secret_string().unwrap_or("No value!")
+        );
 
         // Construct and return the RelayerConfig instance
         Self {
@@ -65,18 +94,5 @@ impl RelayerConfig {
             pem_path: env::var(PEM_PATH_KEY).unwrap(),
             ic_replica_url: env::var(IC_REPLICA_URL_KEY).unwrap(),
         }
-    }
-}
-
-impl Default for RelayerConfig {
-    /// Provides a default instance of RelayerConfig.
-    ///
-    /// This implementation simply calls the `new()` method to create a default instance.
-    ///
-    /// # Returns
-    ///
-    /// A default instance of RelayerConfig.
-    fn default() -> Self {
-        Self::new()
     }
 }
