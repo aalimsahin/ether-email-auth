@@ -1,250 +1,358 @@
 <!doctype html>
 <html>
-  <style>
-    @font-face {
-      font-family: "Fustat";
-      src: url("https://storage.googleapis.com/email-templates-artifacts/Fustat/Fustat-Regular.ttf") format('truetype');
-      font-weight: 400;
-    }
-    @font-face {
-      font-family: "Fustat";
-      src: url("https://storage.googleapis.com/email-templates-artifacts/Fustat/Fustat-Medium.ttf") format('truetype');
-      font-weight: 500;
-    }
-    @font-face {
-      font-family: "Fustat";
-      src: url("https://storage.googleapis.com/email-templates-artifacts/Fustat/Fustat-SemiBold.ttf") format('truetype');
-      font-weight: 600;
-    }
-    @font-face {
-      font-family: "Fustat";
-      src: url("https://storage.googleapis.com/email-templates-artifacts/Fustat/Fustat-Bold.ttf") format('truetype');
-      font-weight: 700;
-    }
-
-    *,
-    *:before,
-    *:after {
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-      line-height: 1.4;
-      padding: 0;
-      margin: 0;
-      font-family: "Fustat", sans-serif;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-      -webkit-font-smoothing: antialiased;
-    }
-    a {
-      color: #5e6ad2;
-      text-decoration: underline;
-      line-height: 20px;
-    }
-    .primary-button {
-      border: none;
-      background-color: #5e6ad2;
-      color: white;
-      border-radius: 8px;
-      padding: 10px 24px;
-      font-weight: 500;
-    }
-    .secondary-button {
-      border: none;
-      background-color: #26272e;
-      color: white;
-      stroke: #2d2f31;
-      border-radius: 8px;
-      font-weight: 500;
-      padding: 10px 24px;
-    }
-
-    .social-links-logo {
-      border-radius: 50%;
-      background: #ffffff18;
-      border: 1px solid #bfbfbf20;
-      height: 24px;
-      width: 24px;
-      display: inline-block;
-      text-align: center;
-    }
-  </style>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link href="https://fonts.googleapis.com/css?family=Fustat&display=swap" rel="stylesheet" />
+    <title>Email Auth</title>
+    <style>
+      @font-face {
+        font-family: "DM Sans";
+        font-style: normal;
+        font-weight: 400;
+        src: url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&display=swap")
+          format("woff2");
+      }
+
+      * {
+        font-family: "DM Sans", sans-serif;
+      }
+
+      .font-DM-Sans {
+        font-family: "DM Sans", sans-serif;
+      }
+      .black_bg {
+        background: linear-gradient(#101010, #101010) !important;
+      }
+
+      .text {
+        font-size: 16px;
+        line-height: 24px;
+        margin: 16px 0;
+        color: rgba(0, 0, 0, 0.64);
+        font-weight: 500;
+      }
+    </style>
   </head>
   <body
     style="
+      background-color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+      line-height: 1.4;
       margin: 0;
       padding: 0;
-      font-size: 16px;
-      font-family: 'Fustat', sans-serif;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
     "
   >
-    <table
-      align="center"
-      width="100%"
+    <span
+      class="preheader"
       style="
-        max-width: 480px;
-        margin: 0 auto;
-        padding: 0;
+        color: transparent;
+        display: none;
+        height: 0;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        mso-hide: all;
+        visibility: hidden;
+        width: 0;
+      "
+      >Recovery Success</span
+    >
+    <table
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      class="body"
+      style="
+        border-collapse: separate;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        width: 100%;
+        background-color: hsl(0, 0%, 100%);
       "
     >
       <tr>
-        <td align="center" style="padding: 0">
-          <!-- Header -->
-          <table
-            width="100%"
+        <td style="font-size: 14px; vertical-align: top">&nbsp;</td>
+        <td
+          class="container"
+          style="
+            font-size: 14px;
+            display: block;
+            max-width: 580px;
+            padding: 10px;
+            width: 580px;
+            margin: 0 auto !important;
+          "
+        >
+          <div
+            class="content"
             style="
-              background-image: url(https://storage.googleapis.com/email-templates-artifacts/Header.png?ignoreCache=1);
-              background-size: cover;
-              background-position: center;
-              height: 4.5rem;
-              border-radius: 8px 8px 0 0;
+              box-sizing: border-box;
+              display: block;
+              margin: 0 auto;
+              max-width: 580px;
+              padding: 20px;
+              background-color: rgba(244, 244, 244, 1);
+              border-radius: 16px;
             "
           >
-          </table>
-
-          <!-- Content -->
-          <table
-            width="100%"
-            style="
-              background-color: white;
-              padding: 2rem 1rem;
-              border: 1px solid #dddddd;
-            "
-          >
-            <tr>
-              <td style="padding: 0; font-size: 16px; color: #000">
-                Hi, {{userEmailAddr}}!
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-top: 15px; font-family: 'Fustat', sans-serif;">
-                Your recovery request for the wallet address <strong>{{walletAddress}}</strong> is successful.
-                Your request ID is <strong>#{{requestId}}</strong> is now complete.
-              </td>
-            </tr>
-            <tr>
-              <td style="padding-top: 20px">
-                <p style="margin: 0">
-                  Cheers,<br /><strong>The ZK Email Team</strong>
-                </p>
-              </td>
-            </tr>
-          </table>
-
-          <!-- Footer -->
-          <table
-            width="100%"
-            style="
-              background-image: url(https://storage.googleapis.com/email-templates-artifacts/Footer.png?ignoreCache=1);
-              background-size: cover;
-              height: 4.5rem;
-              border-radius: 0 0 8px 8px;
-            "
-          >
-            <tr>
-              <td align="center" style="padding: 5px">
-                <p style="color: #D4D4D4; font-weight: 500; font-size: 14px; margin: 0; margin-bottom: 4px;">
-                  Powered by
-                  <a
-                    href="#"
-                    style="color: white; font-size: 14px; text-decoration: underline;"
-                    >ZK Email</a
+            <!-- CLAVE LOGO -->
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td>
+                  <img
+                    alt="Logo of Clave"
+                    src="https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/onlylogo.png"
+                    style="width: 38px; height: 38px"
+                  />
+                </td>
+                <td>
+                  <p
+                    style="font-size: 32px; margin-left: 3px; font-weight: 400"
                   >
-                </p>
-                <table>
-                  <tr>
-                    <td>
-                      <a
-                        href="https://github.com/zkemail"
-                        class="social-links-logo"
-                        style=" border-radius: 50%;
-                            background: #161819;
-                            border: 1px solid #3B3B3B;
-                            backdrop-filter: blur(8px);
-                            margin-left: 4px;
-                            margin-right: 4px;
-                            height: 24px;
-                            width: 24px;
-                            text-align: center;
-                            line-height: 24px;
-                            display: block"
-                        ><img
-                          src="https://storage.googleapis.com/email-templates-artifacts/GithubLogo.png?ignoreCache=1"
-                          alt="GitHub Logo"
-                          style="height: 12px; width: 12px;"
-                      /></a>
-                    </td>
-                    <td>
-                      <a
-                        href="https://twitter.com/zkemail"
-                        class="social-links-logo"
-                        style=" border-radius: 50%;
-                            background: #161819;
-                            border: 1px solid #3B3B3B;
-                            backdrop-filter: blur(8px);
-                            margin-left: 4px;
-                            margin-right: 4px;
-                            height: 24px;
-                            width: 24px;
-                            text-align: center;
-                            line-height: 24px;
-                            display: block"
-                        ><img
-                          src="https://storage.googleapis.com/email-templates-artifacts/XLogo.png?ignoreCache=1"
-                          alt="Twitter Logo"
-                          style="height: 12px; width: 12px;"
-                      /></a>
-                    </td>
-                    <td>
-                      <a href="https://t.me/zkemail/1" class="social-links-logo"
-                      style=" border-radius: 50%;
-                            background: #161819;
-                            border: 1px solid #3B3B3B;
-                            backdrop-filter: blur(8px);
-                            margin-left: 4px;
-                            margin-right: 4px;
-                            height: 24px;
-                            width: 24px;
-                            text-align: center;
-                            line-height: 24px;
-                            display: block"
-                        ><img
-                          src="https://storage.googleapis.com/email-templates-artifacts/TelegramLogo.png?ignoreCache=1"
-                          alt="Telegram Logo"
-                          style="height: 12px; width: 12px;"
-                      /></a>
-                    </td>
-                    <td>
-                      <a
-                        href="https://discord.gg/XgAUbX3F4T"
-                        class="social-links-logo"
-                        style=" border-radius: 50%;
-                            background: #161819;
-                            border: 1px solid #3B3B3B;
-                            backdrop-filter: blur(8px);
-                            margin-left: 4px;
-                            margin-right: 4px;
-                            height: 24px;
-                            width: 24px;
-                            text-align: center;
-                            line-height: 24px;
-                            display: block"
-                        ><img
-                          src="https://storage.googleapis.com/email-templates-artifacts/DiscordLogo.png?ignoreCache=1"
-                          alt="Discord Logo"
-                          style="height: 12px; width: 12px;"
-                      /></a>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
+                    Clave
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <!-- START CENTERED WHITE CONTAINER -->
+            <table
+              role="presentation"
+              class="main"
+              style="
+                border-collapse: separate;
+                mso-table-lspace: 0pt;
+                mso-table-rspace: 0pt;
+                width: 100%;
+                background: rgba(244, 244, 244, 1);
+                border-radius: 3px;
+              "
+            >
+              <!-- START MAIN CONTENT AREA -->
+              <tr>
+                <td
+                  class="wrapper"
+                  style="
+                    font-size: 14px;
+                    vertical-align: top;
+                    box-sizing: border-box;
+                  "
+                >
+                  <table
+                    role="presentation"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      width: 100%;
+                    "
+                  >
+                    <tr>
+                      <td style="font-size: 14px; vertical-align: top">
+                        <p
+                          style="
+                            font-size: 14px;
+                            font-weight: normal;
+                            margin: 0;
+                            margin-bottom: 15px;
+                          "
+                        >
+                          Hi, {{userEmailAddr}}!
+                        </p>
+                        <p
+                          style="
+                            font-size: 14px;
+                            font-weight: normal;
+                            margin: 0;
+                          "
+                        >
+                        Your recovery request for the wallet address <strong>{{walletAddress}}</strong> is successful.
+                        <br><br>
+                        Your request ID is #{{requestId}}.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- END MAIN CONTENT AREA -->
+            </table>
+            <!-- END CENTERED WHITE CONTAINER -->
+            <!-- START FOOTER -->
+            <hr
+              style="
+                width: 100%;
+                border: none;
+                border-top: 1px solid #eaeaea;
+                border-color: #b9b9b9;
+                margin: 16px 0;
+              "
+            />
+            <p
+              style="
+                font-size: 16px;
+                line-height: 24px;
+                margin-top: 16px;
+                color: rgba(0, 0, 0, 0.64);
+                font-weight: 500;
+                margin-bottom: 0px;
+              "
+            >
+              Stay Secure,
+            </p>
+            <p
+              style="
+                font-size: 20px;
+                line-height: 24px;
+                color: rgba(0, 0, 0);
+                font-weight: 500;
+                margin-top: 0px;
+              "
+            >
+              Clave Team
+            </p>
+            <div
+              style='border-radius: 8px; padding-left: 15px; display: block'
+              class='black_bg'
+            >
+              <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                <tr>
+                  <td style='vertical-align: bottom'>
+                    <p
+                      style='
+                        font-size: 24px;
+                        line-height: 20px;
+                        margin: 16px 0;
+                        color: #fff;
+                        font-weight: 500;
+                      '
+                      class='black_bg'
+                    >
+                      Connect with us:
+                    </p>
+                    <table
+                      border='0'
+                      cellspacing='0'
+                      class='black_bg'
+                      cellpadding='0'
+                      style='height: 30px; margin-bottom: 16px'
+                    >
+                      <tr style='height: 30px'>
+                        <td style='padding-right: 5px; height: 30px'>
+                          <a
+                            href='https://twitter.com/getclave'
+                            target='_blank'
+                            style='
+                              color: #067df7;
+                              text-decoration: none;
+                              margin-right: 5px;
+                            '
+                            class='black_bg'
+                            ><img
+                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/twitter.png'
+                              style='
+                                display: block;
+                                outline: none;
+                                border: none;
+                                text-decoration: none;
+                                width: 30px;
+                                height: 30px;
+                              '
+                              class='black_bg'
+                          /></a>
+                        </td>
+                        <td style='padding-right: 5px; height: 30px'>
+                          <a
+                            href='https://www.linkedin.com/company/getclave'
+                            target='_blank'
+                            style='
+                              color: #067df7;
+                              text-decoration: none;
+                              margin-right: 5px;
+                            '
+                            class='black_bg'
+                            ><img
+                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/linkedin.png'
+                              width='30'
+                              height='30'
+                              style='
+                                display: block;
+                                outline: none;
+                                border: none;
+                                text-decoration: none;
+                              '
+                              class='black_bg'
+                          /></a>
+                        </td>
+                        <td style='padding-right: 5px; height: 30px'>
+                          <a
+                            href='https://getclave.io/'
+                            target='_blank'
+                            style='
+                              color: #067df7;
+                              text-decoration: none;
+                              margin-right: 5px;
+                            '
+                            class='black_bg'
+                            ><img
+                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/web.png'
+                              width='30'
+                              height='30'
+                              style='
+                                display: block;
+                                outline: none;
+                                border: none;
+                                text-decoration: none;
+                              '
+                              class='black_bg'
+                          /></a>
+                        </td>
+                        <td style='padding-right: 5px; height: 30px'>
+                          <a
+                            href='https://blog.getclave.io/'
+                            target='_blank'
+                            style='
+                              color: #067df7;
+                              text-decoration: none;
+                              margin-right: 5px;
+                            '
+                            class='black_bg'
+                            ><img
+                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/reactout.png'
+                              width='30'
+                              height='30'
+                              style='
+                                display: block;
+                                outline: none;
+                                border: none;
+                                text-decoration: none;
+                              '
+                              class='black_bg'
+                          /></a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td align='right'>
+                    <img
+                      src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/cardLogo.png'
+                      style='max-height: 150px; display: block'
+                    />
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!-- END FOOTER -->
+          </div>
         </td>
+        <td style="font-size: 14px; vertical-align: top">&nbsp;</td>
       </tr>
     </table>
   </body>
