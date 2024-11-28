@@ -35,6 +35,7 @@ pub async fn run_server() -> Result<()> {
         )
         .route("/api/requestStatus", post(request_status_api))
         .route("/api/acceptanceRequest", post(handle_acceptance_request))
+        .route("/api/sendAcceptanceRequest", post(handle_send_acceptance_request))
         .route("/api/recoveryRequest", post(handle_recovery_request))
         .route(
             "/api/completeRequest",

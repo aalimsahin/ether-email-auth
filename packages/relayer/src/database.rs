@@ -259,6 +259,98 @@ impl Database {
         Ok(())
     }
 
+    /// Updates the credentials of old guardians.
+    ///
+    /// # Arguments
+    ///
+    /// * `is_set` - The new value for the `is_set` field.
+    /// * `account_eth_addr` - The Ethereum address of the account.
+    /// * `guardian_email_addr` - The new guardian email of the account.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` indicating success or failure of the update operation.
+    pub(crate) async fn update_credentials_of_old_guardians(
+        &self,
+        is_set: bool,
+        account_eth_addr: &str,
+        guardian_email_addr: &str,
+    ) -> std::result::Result<(), DatabaseError> {
+        println!("update_credentials_of_old_guardians {:?}", is_set);
+        let result = sqlx::query(
+            "SELECT * FROM requests
+             WHERE account_eth_addr = $1
+             AND guardian_email_addr = $2
+             AND is_for_recovery = FALSE
+             AND is_processed = FALSE
+             AND is_success IS NULL",
+        )
+        .bind(account_eth_addr)
+        .bind(guardian_email_addr)
+        .fetch_all(&self.db)
+        .await;
+
+        let rows = match result {
+            Ok(rows) => rows,
+            Err(e) => {
+                println!("Database error details: {:?}", e);
+                return Err(DatabaseError::new("Failed to get pending requests", e));
+            }
+        };
+
+        let mut requests = Vec::new();
+
+        for row in rows {
+            let request = Request {
+                request_id: row.get::<i64, _>("request_id") as u32,
+                account_eth_addr: row.get("account_eth_addr"),
+                controller_eth_addr: row.get("controller_eth_addr"),
+                guardian_email_addr: row.get("guardian_email_addr"),
+                is_for_recovery: row.get("is_for_recovery"),
+                template_idx: row.get::<i32, _>("template_idx") as u64,
+                is_processed: row.get("is_processed"),
+                is_success: row.get("is_success"),
+                email_nullifier: row.get("email_nullifier"),
+                account_salt: row.get("account_salt"),
+            };
+            requests.push(request);
+        }
+
+        let mut has_pending_request = false;
+
+        for request in &requests {
+            let has_pending = sqlx::query_scalar::<_, i64>(
+                "SELECT COUNT(*) FROM expected_replies
+                 WHERE request_id = $1
+                 AND has_reply = FALSE
+                 AND NOW() - created_at < INTERVAL '10 minutes'",
+            )
+            .bind(request.request_id.to_string())
+            .fetch_one(&self.db)
+            .await
+            .map_err(|e| DatabaseError::new("Failed to check pending replies", e))?;
+
+            if has_pending > 0 {
+                has_pending_request = true;
+                break;
+            }
+        }
+
+        if has_pending_request {
+            sqlx::query(
+                "UPDATE credentials SET is_set = $1 WHERE account_eth_addr = $2 AND guardian_email_addr != $3 AND is_set = true",
+            )
+            .bind(is_set)
+            .bind(account_eth_addr)
+            .bind(guardian_email_addr)
+            .execute(&self.db)
+            .await
+            .map_err(|e| DatabaseError::new("Failed to update credentials of inactive guardian", e))?;
+        }
+
+        Ok(())
+    }
+
     /// Updates the credentials of an inactive guardian.
     ///
     /// # Arguments

@@ -177,15 +177,6 @@ pub async fn handle_acceptance_request(
             is_set: false,
         })
         .await?;
-
-        handle_email_event(EmailAuthEvent::AcceptanceRequest {
-            account_eth_addr,
-            guardian_email_addr: payload.guardian_email_addr.clone(),
-            request_id,
-            command: payload.command.clone(),
-            account_code: payload.account_code.clone(),
-        })
-        .await?;
     } else {
         // Insert new credentials and send acceptance request email
         DB.insert_credentials(&Credentials {
@@ -195,20 +186,90 @@ pub async fn handle_acceptance_request(
             is_set: false,
         })
         .await?;
-
-        handle_email_event(EmailAuthEvent::AcceptanceRequest {
-            account_eth_addr,
-            guardian_email_addr: payload.guardian_email_addr.clone(),
-            request_id,
-            command: payload.command.clone(),
-            account_code: payload.account_code.clone(),
-        })
-        .await?;
     }
 
     Ok(Json(AcceptanceResponse {
         request_id,
         command_params,
+    }))
+}
+
+/// Handles a send acceptance request for a wallet.
+///
+/// # Arguments
+///
+/// * `payload` - A JSON payload containing the send acceptance request details.
+///
+/// # Returns
+///
+/// A `Result` containing a JSON `AcceptanceResponse` or an `ApiError`.
+pub async fn handle_send_acceptance_request(
+    Json(payload): Json<SendAcceptanceRequest>,
+) -> Result<Json<AcceptanceResponse>, ApiError> {
+    let command_template = CLIENT
+        .get_acceptance_command_templates(&payload.controller_eth_addr, payload.template_idx)
+        .await?;
+
+    // Extract and validate command parameters
+    let command_params = extract_template_vals_from_command(&payload.command, command_template)
+        .map_err(|_| ApiError::Validation("Invalid command".to_string()))?;
+
+    // Recover the account address
+    let account_eth_addr = CLIENT
+        .get_recovered_account_from_acceptance_command(
+            &payload.controller_eth_addr,
+            command_params.clone(),
+            payload.template_idx,
+        )
+        .await?;
+
+    let account_eth_addr = format!("0x{:x}", account_eth_addr);
+
+    if account_eth_addr != payload.account_eth_addr {
+        return Err(ApiError::Validation(
+            "Unauthorized account eth addr".to_string(),
+        ));
+    }
+
+    let request_id = payload.request_id;
+
+    let request = DB
+        .get_request(request_id)
+        .await?
+        .ok_or_else(|| ApiError::Validation("Request not found".to_string()))?;
+
+    let credentials = DB
+        .get_credentials_from_wallet_and_email(
+            &request.account_eth_addr,
+            &request.guardian_email_addr,
+        )
+        .await?
+        .ok_or_else(|| ApiError::Validation("Credentials not found".to_string()))?;
+
+    if credentials.is_set {
+        return Err(ApiError::Validation("Credentials already set".to_string()));
+    }
+
+    handle_email_event(EmailAuthEvent::AcceptanceRequest {
+        account_eth_addr: credentials.account_eth_addr.clone(),
+        guardian_email_addr: credentials.guardian_email_addr.clone(),
+        request_id,
+        command: payload.command,
+        account_code: credentials.account_code,
+    })
+    .await?;
+
+    // Update the credentials of the inactive guardian
+    DB.update_credentials_of_old_guardians(
+        false,
+        &credentials.account_eth_addr,
+        &credentials.guardian_email_addr,
+    )
+    .await?;
+
+    Ok(Json(AcceptanceResponse {
+        request_id,
+        command_params: vec![],
     }))
 }
 
@@ -628,6 +689,21 @@ pub struct AcceptanceRequest {
     pub template_idx: u64,
     /// The command to execute.
     pub command: String,
+}
+
+/// Request structure for sending a recovery request.
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SendAcceptanceRequest {
+    /// The Ethereum address of the account to recover.
+    pub account_eth_addr: String,
+    /// The Ethereum address of the controller.
+    pub controller_eth_addr: String,
+    /// The unique identifier for the request.
+    pub request_id: u32,
+    /// The command to execute.
+    pub command: String,
+    /// The index of the template to use.
+    pub template_idx: u64,
 }
 
 /// Response structure for an acceptance request.
