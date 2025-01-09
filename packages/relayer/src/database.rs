@@ -276,7 +276,6 @@ impl Database {
         account_eth_addr: &str,
         guardian_email_addr: &str,
     ) -> std::result::Result<(), DatabaseError> {
-        println!("update_credentials_of_old_guardians {:?}", is_set);
         let result = sqlx::query(
             "SELECT * FROM requests
              WHERE account_eth_addr = $1
