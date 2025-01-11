@@ -31,11 +31,14 @@ const EMAIL_ADDR_FIELDS: usize = 9;
 pub async fn handle_email(email: String) -> Result<EmailAuthEvent, EmailError> {
     let parsed_email = ParsedEmail::new_from_raw_email(&email).await?;
     trace!(LOG, "email: {}", email);
+    println!("email: {}", email);
     let guardian_email_addr = parsed_email.get_from_addr()?;
     let padded_from_addr = PaddedEmailAddr::from_email_addr(&guardian_email_addr);
     trace!(LOG, "From address: {}", guardian_email_addr);
+    println!("From address: {}", guardian_email_addr);
     let email_body = parsed_email.get_cleaned_body()?;
     trace!(LOG, "Email body: {}", email_body);
+    println!("Email body: {}", email_body);
 
     let request_def_path =
         PathBuf::from(REGEX_JSON_DIR_PATH.get().unwrap()).join("request_def.json");
@@ -53,8 +56,10 @@ pub async fn handle_email(email: String) -> Result<EmailAuthEvent, EmailError> {
         return Err(EmailError::Body(WRONG_COMMAND_FORMAT.to_string()));
     }
     info!(LOG, "Request idxes: {:?}", request_idxes);
+    println!("Request idxes: {:?}", request_idxes);
     let request_id = &email[request_idxes[0].0..request_idxes[0].1];
     info!(LOG, "Request ID: {}", request_id);
+    println!("Request ID: {}", request_id);
     let request_id_u32 = request_id
         .parse::<u32>()
         .map_err(|e| EmailError::Parse(format!("Failed to parse request_id to u64: {}", e)))?;
@@ -73,9 +78,15 @@ pub async fn handle_email(email: String) -> Result<EmailAuthEvent, EmailError> {
         }
     };
     trace!(LOG, "Request: {:?}", request);
+    println!("Request: {:?}", request);
     if request.guardian_email_addr != guardian_email_addr {
         error!(
             LOG,
+            "Guardian email address in the request {} is not equal to the one in the email {}",
+            request.guardian_email_addr,
+            guardian_email_addr
+        );
+        println!(
             "Guardian email address in the request {} is not equal to the one in the email {}",
             request.guardian_email_addr,
             guardian_email_addr
@@ -94,6 +105,7 @@ pub async fn handle_email(email: String) -> Result<EmailAuthEvent, EmailError> {
             request.account_eth_addr, guardian_email_addr
         )))?;
     trace!(LOG, "Account code: {}", account_code_str);
+    println!("Account code: {}", account_code_str);
 
     check_and_update_dkim(
         &email,
@@ -110,6 +122,7 @@ pub async fn handle_email(email: String) -> Result<EmailAuthEvent, EmailError> {
         Err(_) => None,
     };
     trace!(LOG, "Invitation code: {:?}", invitation_code);
+    println!("Invitation code: {:?}", invitation_code);
 
     let params = EmailRequestContext {
         request,
@@ -145,12 +158,17 @@ async fn handle_email_request(
                     params.account_code_str,
                     invitation_code
                 );
+                println!(
+                    "Stored account code is not equal to one in the email. Stored: {}, Email: {}",
+                    params.account_code_str, invitation_code
+                );
                 return Err(EmailError::Body(format!(
                     "Stored account code is not equal to one in the email. Stored: {}, Email: {}",
                     params.account_code_str, invitation_code
                 )));
             };
             trace!(LOG, "Email with account code");
+            println!("Email with account code");
             accept(params, invitation_code).await
         }
         (None, is_for_recovery) if is_for_recovery => recover(params).await,
@@ -199,6 +217,8 @@ async fn accept(
 
     info!(LOG, "Email Auth Msg: {:?}", email_auth_msg);
     info!(LOG, "Request: {:?}", params.request);
+    println!("Email Auth Msg: {:?}", email_auth_msg);
+    println!("Request: {:?}", params.request);
 
     // Handle the acceptance with the client
     let is_accepted = CLIENT
@@ -209,7 +229,7 @@ async fn accept(
         )
         .await?;
     info!(LOG, "Is accepted: {}", is_accepted);
-
+    println!("Is accepted: {}", is_accepted);
     update_request(
         &params,
         is_accepted,
@@ -228,6 +248,7 @@ async fn accept(
         };
         DB.update_credentials_of_account_code(&creds).await?;
         trace!(LOG, "Credentials updated: {:?}", creds);
+        println!("Credentials updated: {:?}", creds);
 
         Ok(EmailAuthEvent::AcceptanceSuccess {
             account_eth_addr: params.request.account_eth_addr,
@@ -240,6 +261,11 @@ async fn accept(
         let original_subject = params.parsed_email.get_subject_all()?;
         error!(
             LOG,
+            "Failed to handle acceptance for request_id: {}. Original subject: {}",
+            params.request.request_id,
+            original_subject
+        );
+        println!(
             "Failed to handle acceptance for request_id: {}. Original subject: {}",
             params.request.request_id,
             original_subject
@@ -271,6 +297,8 @@ async fn recover(params: EmailRequestContext) -> Result<EmailAuthEvent, EmailErr
 
     info!(LOG, "Email Auth Msg: {:?}", email_auth_msg);
     info!(LOG, "Request: {:?}", params.request);
+    println!("Email Auth Msg: {:?}", email_auth_msg);
+    println!("Request: {:?}", params.request);
 
     // Handle the recovery with the client
     let is_success = CLIENT
@@ -281,6 +309,7 @@ async fn recover(params: EmailRequestContext) -> Result<EmailAuthEvent, EmailErr
         )
         .await?;
     info!(LOG, "Is success: {}", is_success);
+    println!("Is success: {}", is_success);
     update_request(
         &params,
         is_success,
@@ -292,6 +321,7 @@ async fn recover(params: EmailRequestContext) -> Result<EmailAuthEvent, EmailErr
     let original_subject = params.parsed_email.get_subject_all()?;
     if is_success {
         trace!(LOG, "Recovery success");
+        println!("Recovery success");
         Ok(EmailAuthEvent::RecoverySuccess {
             account_eth_addr: params.request.account_eth_addr,
             guardian_email_addr: params.request.guardian_email_addr,
@@ -303,6 +333,11 @@ async fn recover(params: EmailRequestContext) -> Result<EmailAuthEvent, EmailErr
         let original_subject = params.parsed_email.get_subject_all()?;
         error!(
             LOG,
+            "Failed to handle recovery for request_id: {}. Original subject: {}",
+            params.request.request_id,
+            original_subject
+        );
+        println!(
             "Failed to handle recovery for request_id: {}. Original subject: {}",
             params.request.request_id,
             original_subject
@@ -417,6 +452,7 @@ async fn generate_email_proof(
     .await?;
 
     info!(LOG, "Public signals: {:?}", public_signals);
+    println!("Public signals: {:?}", public_signals);
 
     let account_salt = u256_to_bytes32(&public_signals[COMMAND_FIELDS + DOMAIN_FIELDS + 3]);
     let is_code_exist = public_signals[COMMAND_FIELDS + DOMAIN_FIELDS + 4] == 1u8.into();

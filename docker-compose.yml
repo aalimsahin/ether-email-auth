@@ -20,7 +20,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   relayer:
-    image: asgarovfarhad/relayer:0.1.1
+    image: asgarovfarhad/relayer:0.1.2
     container_name: relayer
     ports:
       - "4500:4500"

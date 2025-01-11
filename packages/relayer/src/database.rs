@@ -129,12 +129,17 @@ impl Database {
             match sqlx::query("SELECT 1").execute(&self.db).await {
                 Ok(_) => {
                     info!(LOG, "Connected successfully to database");
+                    println!("Connected successfully to database");
                     return Ok(());
                 }
                 Err(e) => {
                     error!(
                         LOG,
                         "Failed to initialize connection to the database: {:?}. Retrying...", e
+                    );
+                    println!(
+                        "Failed to initialize connection to the database: {:?}. Retrying...",
+                        e
                     );
                     tokio::time::sleep(Duration::from_secs(i * i)).await;
                 }
@@ -174,6 +179,7 @@ impl Database {
                     is_set,
                 };
                 info!(LOG, "row {:?}", codes_row);
+                println!("row {:?}", codes_row);
                 Ok(Some(codes_row))
             }
             None => Ok(None),
@@ -400,6 +406,7 @@ impl Database {
         .await
         .map_err(|e| DatabaseError::new("Failed to insert credentials", e))?;
         info!(LOG, "Credentials inserted");
+        println!("Credentials inserted");
         Ok(())
     }
 
@@ -473,6 +480,7 @@ impl Database {
                     account_salt,
                 };
                 info!(LOG, "row {:?}", requests_row);
+                println!("row {:?}", requests_row);
                 Ok(Some(requests_row))
             }
             None => Ok(None),
@@ -580,6 +588,7 @@ impl Database {
                     is_set,
                 };
                 info!(LOG, "row {:?}", codes_row);
+                println!("row {:?}", codes_row);
                 Ok(Some(codes_row))
             }
             None => Ok(None),
@@ -617,6 +626,7 @@ impl Database {
         .await
         .map_err(|e| DatabaseError::new("Failed to insert request", e))?;
         info!(LOG, "Request inserted with request_id: {}", request_id);
+        println!("Request inserted with request_id: {}", request_id);
         Ok(())
     }
 

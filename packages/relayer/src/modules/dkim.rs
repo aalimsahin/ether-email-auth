@@ -161,14 +161,16 @@ pub async fn check_and_update_dkim(
     public_key_n.reverse();
     let public_key_hash = public_key_hash(&public_key_n)?;
     info!(LOG, "public_key_hash {:?}", public_key_hash);
+    println!("public_key_hash {:?}", public_key_hash);
 
     // Get email domain
     let domain = parsed_email.get_email_domain()?;
     info!(LOG, "domain {:?}", domain);
-
+    println!("domain {:?}", domain);
     // Check if wallet is deployed
     if CLIENT.get_bytecode(wallet_addr).await? == Bytes::from_static(&[0u8; 20]) {
         info!(LOG, "wallet not deployed");
+        println!("wallet not deployed");
         return Ok(());
     }
 
@@ -178,14 +180,14 @@ pub async fn check_and_update_dkim(
         .await?;
     let email_auth_addr = format!("0x{:x}", email_auth_addr);
     info!(LOG, "email_auth_addr {:?}", email_auth_addr);
-
+    println!("email_auth_addr {:?}", email_auth_addr);
     // Get DKIM from controller or email auth
     let mut dkim = CLIENT.get_dkim_from_controller(controller_eth_addr).await?;
     if CLIENT.get_bytecode(&email_auth_addr).await? != Bytes::new() {
         dkim = CLIENT.get_dkim_from_email_auth(&email_auth_addr).await?;
     }
     info!(LOG, "dkim {:?}", dkim);
-
+    println!("dkim {:?}", dkim);
     // Check if DKIM public key hash is valid
     if CLIENT
         .check_if_dkim_public_key_hash_valid(
@@ -196,6 +198,7 @@ pub async fn check_and_update_dkim(
         .await?
     {
         info!(LOG, "public key registered");
+        println!("public key registered");
         return Ok(());
     }
 
@@ -222,6 +225,7 @@ pub async fn check_and_update_dkim(
     };
 
     info!(LOG, "selector {}", selector);
+    println!("selector {}", selector);
 
     // Generate IC agent and create oracle client
     let ic_agent =
@@ -236,12 +240,15 @@ pub async fn check_and_update_dkim(
     // Request signature from oracle
     let oracle_result = oracle_client.request_signature(&selector, &domain).await?;
     info!(LOG, "DKIM oracle result {:?}", oracle_result);
+    println!("DKIM oracle result {:?}", oracle_result);
 
     // Process oracle response
     let public_key_hash = hex::decode(&oracle_result.public_key_hash[2..])?;
     info!(LOG, "public_key_hash from oracle {:?}", public_key_hash);
+    println!("public_key_hash from oracle {:?}", public_key_hash);
     let signature = Bytes::from_hex(&oracle_result.signature[2..])?;
     info!(LOG, "signature {:?}", signature);
+    println!("signature {:?}", signature);
 
     // Set DKIM public key hash
     let tx_hash = CLIENT
@@ -253,5 +260,6 @@ pub async fn check_and_update_dkim(
         )
         .await?;
     info!(LOG, "DKIM registry updated {:?}", tx_hash);
+    println!("DKIM registry updated {:?}", tx_hash);
     Ok(())
 }

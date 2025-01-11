@@ -112,6 +112,7 @@ lazy_static! {
 /// A `Result` indicating success or failure.
 pub async fn run(config: RelayerConfig) -> Result<()> {
     info!(LOG, "Starting relayer");
+    println!("Starting relayer");
 
     // Initialize realyer configuration
     REGEX_JSON_DIR_PATH.set(config.regex_json_dir_path).unwrap();
@@ -151,10 +152,12 @@ pub async fn run(config: RelayerConfig) -> Result<()> {
             match run_server().await {
                 Ok(_) => {
                     info!(LOG, "run_server exited normally");
+                    println!("run_server exited normally");
                     break; // Exit loop if run_server exits normally
                 }
                 Err(err) => {
                     error!(LOG, "Error api server: {}", err);
+                    println!("Error api server: {}", err);
                     // Add a delay before restarting to prevent rapid restart loops
                     tokio::time::sleep(Duration::from_secs(5)).await;
                 }

@@ -21,11 +21,14 @@ pub async fn run_server() -> Result<()> {
         .await;
 
     info!(LOG, "Testing connection to database");
+    println!("Testing connection to database");
     if let Err(e) = DB.test_db_connection().await {
         error!(LOG, "Failed to initialize db with e: {}", e);
+        println!("Failed to initialize db with e: {}", e);
         panic!("Forcing panic, since connection to DB could not be established");
     };
     info!(LOG, "Testing connection to database successfull");
+    println!("Testing connection to database successfull");
 
     // Initialize the API routes
     let mut app = Router::new()
@@ -54,6 +57,7 @@ pub async fn run_server() -> Result<()> {
 
     // Start the server
     trace!(LOG, "Listening API at {}", addr);
+    println!("Listening API at {}", addr);
     axum::Server::bind(&addr.parse()?)
         .serve(app.into_make_service())
         .await?;
