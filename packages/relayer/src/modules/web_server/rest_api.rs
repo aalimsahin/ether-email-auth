@@ -22,7 +22,7 @@ pub async fn request_status_api(
     Json(payload): Json<RequestStatusRequest>,
 ) -> Result<Json<RequestStatusResponse>, ApiError> {
     trace!(LOG, "Request status API input: {:?}", payload);
-    println!("Request status API input: {:?}", payload);
+    println!("TRCE Request status API input: {:?}", payload);
     let row = DB.get_request(payload.request_id).await?;
 
     // Determine the status based on the retrieved row
@@ -36,7 +36,7 @@ pub async fn request_status_api(
         RequestStatus::NotExist
     };
     trace!(LOG, "Request status API status: {:?}", status);
-    println!("Request status API status: {:?}", status);
+    println!("TRCE Request status API status: {:?}", status);
 
     Ok(Json(RequestStatusResponse {
         request_id: payload.request_id,
@@ -62,7 +62,7 @@ pub async fn handle_acceptance_request(
     Json(payload): Json<AcceptanceRequest>,
 ) -> Result<Json<AcceptanceResponse>, ApiError> {
     trace!(LOG, "Acceptance request API input: {:?}", payload);
-    println!("Acceptance request API input: {:?}", payload);
+    println!("TRCE Acceptance request API input: {:?}", payload);
     let command_template = CLIENT
         .get_acceptance_command_templates(&payload.controller_eth_addr, payload.template_idx)
         .await?;
@@ -72,7 +72,7 @@ pub async fn handle_acceptance_request(
         command_template
     );
     println!(
-        "Acceptance request API command template: {:?}",
+        "TRCE Acceptance request API command template: {:?}",
         command_template
     );
     // Extract and validate command parameters
@@ -84,7 +84,7 @@ pub async fn handle_acceptance_request(
         command_params
     );
     println!(
-        "Acceptance request API command params: {:?}",
+        "TRCE Acceptance request API command params: {:?}",
         command_params
     );
     // Recover the account address
@@ -101,7 +101,7 @@ pub async fn handle_acceptance_request(
         account_eth_addr
     );
     println!(
-        "Acceptance request API account eth addr: {:?}",
+        "TRCE Acceptance request API account eth addr: {:?}",
         account_eth_addr
     );
 
@@ -114,7 +114,7 @@ pub async fn handle_acceptance_request(
             "Acceptance request API account {} not deployed", account_eth_addr
         );
         println!(
-            "Acceptance request API account {} not deployed",
+            "ERROR Acceptance request API account {} not deployed",
             account_eth_addr
         );
         return Err(ApiError::Validation("Wallet not deployed".to_string()));
@@ -175,7 +175,7 @@ pub async fn handle_acceptance_request(
             "Acceptance request API account code {} already used", account_code
         );
         println!(
-            "Acceptance request API account code {} already used",
+            "ERROR Acceptance request API account code {} already used",
             account_code
         );
         return Err(ApiError::Validation(
@@ -189,11 +189,11 @@ pub async fn handle_acceptance_request(
         request_id = rand::thread_rng().gen::<u32>();
     }
     trace!(LOG, "Acceptance request API request ID: {:?}", request_id);
-    println!("Acceptance request API request ID: {:?}", request_id);
+    println!("TRCE Acceptance request API request ID: {:?}", request_id);
 
     let account_salt = calculate_account_salt(&payload.guardian_email_addr, &account_code);
     trace!(LOG, "Acceptance request API account salt: {}", account_salt);
-    println!("Acceptance request API account salt: {}", account_salt);
+    println!("TRCE Acceptance request API account salt: {}", account_salt);
 
     DB.insert_request(&Request {
         request_id,
@@ -221,7 +221,7 @@ pub async fn handle_acceptance_request(
             account_eth_addr
         );
         println!(
-            "Acceptance request API guardian {} already set for {}",
+            "ERROR Acceptance request API guardian {} already set for {}",
             payload.guardian_email_addr,
             account_eth_addr
         );
@@ -243,7 +243,7 @@ pub async fn handle_acceptance_request(
             payload.guardian_email_addr
         );
         println!(
-            "Acceptance request API account {} and email {} already registered",
+            "ERROR Acceptance request API account {} and email {} already registered",
             account_eth_addr,
             payload.guardian_email_addr
         );
@@ -263,7 +263,7 @@ pub async fn handle_acceptance_request(
             payload.guardian_email_addr
         );
         println!(
-            "Acceptance request API account {} and email {} are registered",
+            "TRCE Acceptance request API account {} and email {} are registered",
             account_eth_addr,
             payload.guardian_email_addr
         );
@@ -375,7 +375,7 @@ pub async fn handle_recovery_request(
     Json(payload): Json<RecoveryRequest>,
 ) -> Result<Json<RecoveryResponse>, ApiError> {
     trace!(LOG, "Recovery request API input: {:?}", payload);
-    println!("Recovery request API input: {:?}", payload);
+    println!("TRCE Recovery request API input: {:?}", payload);
     // Fetch the command template
     let command_template = CLIENT
         .get_recovery_command_templates(&payload.controller_eth_addr, payload.template_idx)
@@ -385,7 +385,7 @@ pub async fn handle_recovery_request(
         "Recovery request API command template: {:?}",
         command_template
     );
-    println!("Recovery request API command template: {:?}", command_template);
+    println!("TRCE Recovery request API command template: {:?}", command_template);
     // Extract and validate command parameters
     let command_params = extract_template_vals_from_command(&payload.command, command_template)
         .map_err(|_| ApiError::Validation("Invalid command".to_string()))?;
@@ -394,7 +394,7 @@ pub async fn handle_recovery_request(
         "Recovery request API command params: {:?}",
         command_params
     );
-    println!("Recovery request API command params: {:?}", command_params);
+    println!("TRCE Recovery request API command params: {:?}", command_params);
 
     // Recover the account address
     let account_eth_addr = CLIENT
@@ -411,7 +411,7 @@ pub async fn handle_recovery_request(
         "Recovery request API account eth addr: {:?}",
         account_eth_addr
     );
-    println!("Recovery request API account eth addr: {:?}", account_eth_addr);
+    println!("TRCE Recovery request API account eth addr: {:?}", account_eth_addr);
     // Check if the wallet is deployed
     if !CLIENT.is_wallet_deployed(&account_eth_addr).await? {
         error!(
@@ -419,7 +419,7 @@ pub async fn handle_recovery_request(
             "Recovery request API account {} not deployed", account_eth_addr
         );
         println!(
-            "Recovery request API account {} not deployed",
+            "ERROR Recovery request API account {} not deployed",
             account_eth_addr
         );
         return Err(ApiError::Validation("Wallet not deployed".to_string()));
@@ -474,7 +474,7 @@ pub async fn handle_recovery_request(
         request_id = rand::thread_rng().gen::<u32>();
     }
     trace!(LOG, "Recovery request API request ID: {:?}", request_id);
-    println!("Recovery request API request ID: {:?}", request_id);
+    println!("TRCE Recovery request API request ID: {:?}", request_id);
 
     // Fetch account details and calculate account salt
     let account = DB
@@ -487,7 +487,7 @@ pub async fn handle_recovery_request(
             account_details
         );
         println!(
-            "Recovery request API account details: {:?}",
+            "TRCE Recovery request API account details: {:?}",
             account_details
         );
         calculate_account_salt(&payload.guardian_email_addr, &account_details.account_code)
@@ -499,7 +499,7 @@ pub async fn handle_recovery_request(
             payload.guardian_email_addr
         );
         println!(
-            "Recovery request API account {} and email {} not registered",
+            "ERROR Recovery request API account {} and email {} not registered",
             account_eth_addr,
             payload.guardian_email_addr
         );
@@ -518,7 +518,7 @@ pub async fn handle_recovery_request(
             payload.guardian_email_addr
         );
         println!(
-            "Recovery request API account {} and email {} not registered",
+            "ERROR Recovery request API account {} and email {} not registered",
             account_eth_addr,
             payload.guardian_email_addr
         );
@@ -577,7 +577,7 @@ pub async fn handle_recovery_request(
             payload.guardian_email_addr,
         );
         println!(
-            "Recovery request API for account {} and guardian {}",
+            "TRCE Recovery request API for account {} and guardian {}",
             account_eth_addr,
             payload.guardian_email_addr
         );
@@ -598,7 +598,7 @@ pub async fn handle_recovery_request(
             account_eth_addr
         );
         println!(
-            "Recovery request API guardian {} not set for {}",
+            "ERROR Recovery request API guardian {} not set for {}",
             payload.guardian_email_addr,
             account_eth_addr
         );
@@ -630,7 +630,7 @@ pub async fn handle_complete_recovery_request(
     Json(payload): Json<CompleteRecoveryRequest>,
 ) -> Result<String, ApiError> {
     trace!(LOG, "Complete recovery request API input: {:?}", payload);
-    println!("Complete recovery request API input: {:?}", payload);
+    println!("TRCE Complete recovery request API input: {:?}", payload);
     // Check if the wallet is deployed
     if !CLIENT.is_wallet_deployed(&payload.account_eth_addr).await? {
         error!(
@@ -638,7 +638,7 @@ pub async fn handle_complete_recovery_request(
             "Complete recovery request API account {} not deployed", payload.account_eth_addr
         );
         println!(
-            "Complete recovery request API account {} not deployed",
+            "ERROR Complete recovery request API account {} not deployed",
             payload.account_eth_addr
         );
         return Err(ApiError::Validation("Wallet not deployed".to_string()));
@@ -660,7 +660,7 @@ pub async fn handle_complete_recovery_request(
                 payload.account_eth_addr
             );
             println!(
-                "Complete recovery request API recovery completed for account {}",
+                "TRCE Complete recovery request API recovery completed for account {}",
                 payload.account_eth_addr
             );
             Ok("Recovery completed".to_string())
@@ -672,7 +672,7 @@ pub async fn handle_complete_recovery_request(
                 payload.account_eth_addr
             );
             println!(
-                "Complete recovery request API recovery failed for account {}",
+                "ERROR Complete recovery request API recovery failed for account {}",
                 payload.account_eth_addr
             );
             Err(ApiError::Validation("Recovery failed".to_string()))
@@ -694,7 +694,7 @@ pub async fn handle_complete_recovery_request(
                 .collect::<String>();
             error!(
                 LOG,
-                "Complete recovery request API error: {}", error_message,
+                "ERROR Complete recovery request API error: {}", error_message,
             );
             println!("Complete recovery request API error: {}", error_message);
             Err(ApiError::Internal(error_message))
@@ -715,10 +715,10 @@ pub async fn get_account_salt(
     Json(payload): Json<GetAccountSaltRequest>,
 ) -> Result<String, ApiError> {
     trace!(LOG, "Get account salt API input: {:?}", payload);
-    println!("Get account salt API input: {:?}", payload);
+    println!("TRCE Get account salt API input: {:?}", payload);
     let account_salt = calculate_account_salt(&payload.email_addr, &payload.account_code);
     trace!(LOG, "Get account salt API account salt: {}", account_salt);
-    println!("Get account salt API account salt: {}", account_salt);
+    println!("TRCE Get account salt API account salt: {}", account_salt);
     Ok(account_salt)
 }
 
@@ -735,7 +735,7 @@ pub async fn inactive_guardian(
     Json(payload): Json<InactiveGuardianRequest>,
 ) -> Result<String, ApiError> {
     trace!(LOG, "Inactive guardian API input: {:?}", payload);
-    println!("Inactive guardian API input: {:?}", payload);
+    println!("TRCE Inactive guardian API input: {:?}", payload);
     // Check if the wallet is activated
     let is_activated = CLIENT
         .get_is_activated(&payload.controller_eth_addr, &payload.account_eth_addr)
@@ -745,21 +745,21 @@ pub async fn inactive_guardian(
         "Inactive guardian API is activated: {:?}",
         is_activated
     );
-    println!("Inactive guardian API is activated: {:?}", is_activated);
+    println!("TRCE Inactive guardian API is activated: {:?}", is_activated);
     if is_activated {
         error!(
             LOG,
             "Inactive guardian API wallet {} is activated", payload.account_eth_addr
         );
         println!(
-            "Inactive guardian API wallet {} is activated",
+            "ERROR Inactive guardian API wallet {} is activated",
             payload.account_eth_addr
         );
         return Ok("Wallet is activated".to_string());
     }
 
     trace!(LOG, "Inactive guardian"; "is_activated" => is_activated);
-    println!("Inactive guardian API is activated: {:?}", is_activated);
+    println!("TRCE Inactive guardian API is activated: {:?}", is_activated);
 
     // Parse and format the account Ethereum address
     let account_eth_addr: Address = payload
@@ -768,7 +768,7 @@ pub async fn inactive_guardian(
         .map_err(|e| ApiError::Validation(format!("Failed to parse account_eth_addr: {}", e)))?;
     let account_eth_addr = format!("0x{:x}", &account_eth_addr);
     trace!(LOG, "Inactive guardian"; "account_eth_addr" => &account_eth_addr);
-    println!("Inactive guardian API account eth addr: {:?}", account_eth_addr);
+    println!("TRCE Inactive guardian API account eth addr: {:?}", account_eth_addr);
     // Update the credentials of the inactive guardian
     DB.update_credentials_of_inactive_guardian(false, &account_eth_addr)
         .await?;
@@ -815,7 +815,7 @@ pub async fn receive_email_api_fn(email: String) -> Result<(), ApiError> {
     tokio::spawn(async move {
         if !check_is_valid_request(&parsed_email).await.unwrap() {
             trace!(LOG, "Got a non valid email request. Ignoring.");
-            println!("Got a non valid email request. Ignoring.");
+            println!("TRCE Got a non valid email request. Ignoring.");
             return;
         }
 
@@ -830,11 +830,11 @@ pub async fn receive_email_api_fn(email: String) -> Result<(), ApiError> {
         {
             Ok(_) => {
                 trace!(LOG, "Ack email event sent");
-                println!("Ack email event sent");
+                println!("TRCE Ack email event sent");
             }
             Err(e) => {
                 error!(LOG, "Error handling email event: {:?}", e);
-                println!("Error handling email event: {:?}", e);
+                println!("ERROR Error handling email event: {:?}", e);
             }
         }
 
@@ -844,7 +844,7 @@ pub async fn receive_email_api_fn(email: String) -> Result<(), ApiError> {
                 Ok(_) => {}
                 Err(e) => {
                     error!(LOG, "Error handling email event: {:?}", e);
-                    println!("Error handling email event: {:?}", e);
+                    println!("ERROR Error handling email event: {:?}", e);
                 }
             },
             Err(e) => {
@@ -856,7 +856,7 @@ pub async fn receive_email_api_fn(email: String) -> Result<(), ApiError> {
                     "Error handling email for the original subject {}: {:?}", original_subject, e
                 );
                 println!(
-                    "Error handling email for the original subject {}: {:?}",
+                    "ERROR Error handling email for the original subject {}: {:?}",
                     original_subject, e
                 );
                 match handle_email_event(EmailAuthEvent::Error {
@@ -872,7 +872,7 @@ pub async fn receive_email_api_fn(email: String) -> Result<(), ApiError> {
                     Ok(_) => {}
                     Err(e) => {
                         error!(LOG, "Error handling email event: {:?}", e);
-                        println!("Error handling email event: {:?}", e);
+                        println!("ERROR Error handling email event: {:?}", e);
                     }
                 }
             }
