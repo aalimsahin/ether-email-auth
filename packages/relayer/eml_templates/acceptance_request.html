@@ -173,12 +173,30 @@
                             margin: 0;
                           "
                         >
-                          You have received an guardian request from the wallet
-                          address <strong>{{walletAddress}}</strong>. Reply
-                          "<strong>Confirm</strong>" to this email to accept the
-                          request.
-                          <br><br>
+                          You have received a request to add this email as a
+                          backup option for
+                          <strong>{{username}}</strong> wallet address
+                          <strong>{{walletAddress}}</strong>. <br /><br />
+                          By confirming, this email will be securely linked to
+                          your account as a recovery method. In case you lose
+                          access to your phone, you can use this email to regain
+                          access to your wallet.
+                          <br /><br />
+                          To confirm this request, reply to this email with the
+                          word <strong>"Confirm"</strong> to verify the request.
+                          <br /><br />
+                          <strong>Important Notes:</strong><br />
+                          &nbsp;&nbsp;·&nbsp;&nbsp;This is part of Clave’s Email
+                          Backup (Beta) feature, developed with the Ethereum
+                          Foundation to provide an innovative and secure
+                          recovery solution.<br />
+                          &nbsp;&nbsp;·&nbsp;&nbsp;If you did not make this
+                          request, you can safely ignore this email—no changes
+                          will be made to your account.<br /><br />
                           Your request ID is #{{requestId}}.
+                          <br /><br />
+                          If you are not aware of this request, please disregard
+                          this email.
                         </p>
                       </td>
                     </tr>
@@ -222,131 +240,131 @@
               Clave Team
             </p>
             <div
-              style='border-radius: 8px; padding-left: 15px; display: block'
-              class='black_bg'
+              style="border-radius: 8px; padding-left: 15px; display: block"
+              class="black_bg"
             >
-              <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td style='vertical-align: bottom'>
+                  <td style="vertical-align: bottom">
                     <p
-                      style='
+                      style="
                         font-size: 24px;
                         line-height: 20px;
                         margin: 16px 0;
                         color: #fff;
                         font-weight: 500;
-                      '
-                      class='black_bg'
+                      "
+                      class="black_bg"
                     >
                       Connect with us:
                     </p>
                     <table
-                      border='0'
-                      cellspacing='0'
-                      class='black_bg'
-                      cellpadding='0'
-                      style='height: 30px; margin-bottom: 16px'
+                      border="0"
+                      cellspacing="0"
+                      class="black_bg"
+                      cellpadding="0"
+                      style="height: 30px; margin-bottom: 16px"
                     >
-                      <tr style='height: 30px'>
-                        <td style='padding-right: 5px; height: 30px'>
+                      <tr style="height: 30px">
+                        <td style="padding-right: 5px; height: 30px">
                           <a
-                            href='https://twitter.com/getclave'
-                            target='_blank'
-                            style='
+                            href="https://twitter.com/getclave"
+                            target="_blank"
+                            style="
                               color: #067df7;
                               text-decoration: none;
                               margin-right: 5px;
-                            '
-                            class='black_bg'
+                            "
+                            class="black_bg"
                             ><img
-                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/twitter.png'
-                              style='
+                              src="https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/twitter.png"
+                              style="
                                 display: block;
                                 outline: none;
                                 border: none;
                                 text-decoration: none;
                                 width: 30px;
                                 height: 30px;
-                              '
-                              class='black_bg'
+                              "
+                              class="black_bg"
                           /></a>
                         </td>
-                        <td style='padding-right: 5px; height: 30px'>
+                        <td style="padding-right: 5px; height: 30px">
                           <a
-                            href='https://www.linkedin.com/company/getclave'
-                            target='_blank'
-                            style='
+                            href="https://www.linkedin.com/company/getclave"
+                            target="_blank"
+                            style="
                               color: #067df7;
                               text-decoration: none;
                               margin-right: 5px;
-                            '
-                            class='black_bg'
+                            "
+                            class="black_bg"
                             ><img
-                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/linkedin.png'
-                              width='30'
-                              height='30'
-                              style='
+                              src="https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/linkedin.png"
+                              width="30"
+                              height="30"
+                              style="
                                 display: block;
                                 outline: none;
                                 border: none;
                                 text-decoration: none;
-                              '
-                              class='black_bg'
+                              "
+                              class="black_bg"
                           /></a>
                         </td>
-                        <td style='padding-right: 5px; height: 30px'>
+                        <td style="padding-right: 5px; height: 30px">
                           <a
-                            href='https://getclave.io/'
-                            target='_blank'
-                            style='
+                            href="https://getclave.io/"
+                            target="_blank"
+                            style="
                               color: #067df7;
                               text-decoration: none;
                               margin-right: 5px;
-                            '
-                            class='black_bg'
+                            "
+                            class="black_bg"
                             ><img
-                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/web.png'
-                              width='30'
-                              height='30'
-                              style='
+                              src="https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/web.png"
+                              width="30"
+                              height="30"
+                              style="
                                 display: block;
                                 outline: none;
                                 border: none;
                                 text-decoration: none;
-                              '
-                              class='black_bg'
+                              "
+                              class="black_bg"
                           /></a>
                         </td>
-                        <td style='padding-right: 5px; height: 30px'>
+                        <td style="padding-right: 5px; height: 30px">
                           <a
-                            href='https://blog.getclave.io/'
-                            target='_blank'
-                            style='
+                            href="https://blog.getclave.io/"
+                            target="_blank"
+                            style="
                               color: #067df7;
                               text-decoration: none;
                               margin-right: 5px;
-                            '
-                            class='black_bg'
+                            "
+                            class="black_bg"
                             ><img
-                              src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/reactout.png'
-                              width='30'
-                              height='30'
-                              style='
+                              src="https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/reactout.png"
+                              width="30"
+                              height="30"
+                              style="
                                 display: block;
                                 outline: none;
                                 border: none;
                                 text-decoration: none;
-                              '
-                              class='black_bg'
+                              "
+                              class="black_bg"
                           /></a>
                         </td>
                       </tr>
                     </table>
                   </td>
-                  <td align='right'>
+                  <td align="right">
                     <img
-                      src='https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/cardLogo.png'
-                      style='max-height: 150px; display: block'
+                      src="https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/cardLogo.png"
+                      style="max-height: 150px; display: block"
                     />
                   </td>
                 </tr>
