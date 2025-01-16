@@ -43,6 +43,7 @@ pub static RELAYER_EMAIL_ADDRESS: OnceLock<String> = OnceLock::new();
 pub static SMTP_SERVER: OnceLock<String> = OnceLock::new();
 pub static ERROR_EMAIL_ADDR: OnceLock<String> = OnceLock::new();
 pub static DATABASE_PATH: OnceLock<String> = OnceLock::new();
+pub static USERNAME_RESOLVER_URL: OnceLock<String> = OnceLock::new();
 
 pub static DKIM_CANISTER_ID: OnceLock<String> = OnceLock::new();
 pub static WALLET_CANISTER_ID: OnceLock<String> = OnceLock::new();
@@ -145,6 +146,7 @@ pub async fn run(config: RelayerConfig) -> Result<()> {
     PROVER_CIRCUIT_CPP_DOWNLOAD_URL
         .set(config.prover_circuit_cpp_download_url)
         .unwrap();
+    USERNAME_RESOLVER_URL.set(config.username_resolver_url).unwrap();
 
     // Spawn the API server task
     let api_server_task = tokio::task::spawn(async move {

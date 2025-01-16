@@ -119,12 +119,16 @@ pub async fn handle_email_event(event: EmailAuthEvent) -> Result<(), EmailError>
 
             let subject = "[Reply Needed] Recovery: Acceptance Request".to_string();
 
+            // Get Clave username of wallet
+            let username = fetch_username(&account_eth_addr).await;
+
             // Prepare data for HTML rendering
             let render_data = serde_json::json!({
                 "userEmailAddr": guardian_email_addr,
                 "walletAddress": account_eth_addr,
                 "command": command,
                 "requestId": request_id,
+                "username": username,
             });
             let body_html = render_html("acceptance_request.html", render_data).await?;
 
@@ -274,12 +278,15 @@ pub async fn handle_email_event(event: EmailAuthEvent) -> Result<(), EmailError>
 
             let subject = "[Reply Needed] Recovery: Recovery Request".to_string();
 
+            let username = fetch_username(&account_eth_addr).await;
+
             // Prepare data for HTML rendering
             let render_data = serde_json::json!({
                 "userEmailAddr": guardian_email_addr,
                 "walletAddress": account_eth_addr,
                 "command": command,
                 "requestId": request_id,
+                "username": username,
             });
             let body_html = render_html("recovery_request.html", render_data).await?;
 
@@ -310,11 +317,14 @@ pub async fn handle_email_event(event: EmailAuthEvent) -> Result<(), EmailError>
                 account_eth_addr, request_id
             );
 
+            let username = fetch_username(&account_eth_addr).await;
+
             // Prepare data for HTML rendering
             let render_data = serde_json::json!({
                 "walletAddress": account_eth_addr,
                 "userEmailAddr": guardian_email_addr,
                 "requestId": request_id,
+                "username": username,
             });
             let body_html = render_html("acceptance_success.html", render_data).await?;
 
@@ -345,11 +355,14 @@ pub async fn handle_email_event(event: EmailAuthEvent) -> Result<(), EmailError>
                 account_eth_addr, request_id
             );
 
+            let username = fetch_username(&account_eth_addr).await;
+
             // Prepare data for HTML rendering
             let render_data = serde_json::json!({
                 "walletAddress": account_eth_addr,
                 "userEmailAddr": guardian_email_addr,
                 "requestId": request_id,
+                "username": username,
             });
             let body_html = render_html("recovery_success.html", render_data).await?;
 
@@ -637,4 +650,47 @@ pub async fn check_is_valid_request(email: &ParsedEmail) -> Result<bool, EmailEr
     // Check if the reply is valid (not a duplicate) using the database
     let is_valid = DB.is_valid_reply(&reply_message_id).await?;
     Ok(is_valid)
+}
+
+/// Resolves the Clave username for the wallet address.
+///
+/// # Arguments
+///
+/// * `account_eth_addr` - The wallet address to be resolved.
+///
+/// # Returns
+///
+/// A `Result` containing a string indicating the username.
+async fn fetch_username(account_eth_addr: &String) -> String {
+    let Some(username_resolver_url) = USERNAME_RESOLVER_URL.get() else {
+        return "".to_string();
+    };
+
+    let url = format!(
+        "{}?type=address&value={}",
+        username_resolver_url, account_eth_addr
+    );
+
+    match reqwest::get(&url).await {
+        Ok(response) => {
+            if response.status().is_success() {
+                match response.text().await {
+                    Ok(text) if !text.is_empty() => {
+                        // First letter uppercase, add comma at the end
+                        let formatted_text = text
+                            .chars()
+                            .next()
+                            .map(|c| c.to_uppercase().to_string() + &text[1..] + ",")
+                            .unwrap_or_else(|| text);
+
+                        formatted_text
+                    }
+                    _ => "".to_string(),
+                }
+            } else {
+                "".to_string()
+            }
+        }
+        Err(_) => "".to_string(),
+    }
 }

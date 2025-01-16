@@ -31,6 +31,7 @@ pub struct AWSConfig {
     pub wallet_canister_id: String,
     pub pem_path: String,
     pub ic_replica_url: String,
+    pub username_resolver_url: String,
 }
 
 /// Configuration struct for the Relayer service.
@@ -60,6 +61,7 @@ pub struct RelayerConfig {
     pub wallet_canister_id: String,
     pub pem_path: String,
     pub ic_replica_url: String,
+    pub username_resolver_url: String,
 }
 
 impl RelayerConfig {
@@ -128,6 +130,7 @@ impl RelayerConfig {
                 wallet_canister_id: secret_config.wallet_canister_id.clone(),
                 pem_path: secret_config.pem_path.clone(),
                 ic_replica_url: secret_config.ic_replica_url.clone(),
+                username_resolver_url: secret_config.username_resolver_url.clone(),
             }
         } else {
             // Construct and return the RelayerConfig instance
@@ -156,6 +159,7 @@ impl RelayerConfig {
                 wallet_canister_id: env::var(WALLET_CANISTER_ID_KEY).unwrap(),
                 pem_path: env::var(PEM_PATH_KEY).unwrap(),
                 ic_replica_url: env::var(IC_REPLICA_URL_KEY).unwrap(),
+                username_resolver_url: env::var(USERNAME_RESOLVER_URL_KEY).unwrap(),
             }
         }
     }
